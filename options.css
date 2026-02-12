@@ -216,6 +216,24 @@ textarea:focus-visible {
   margin-top: 6px;
 }
 
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.shortcut-help {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 button {
   border: 1px solid #1d4ed8;
   background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
@@ -235,6 +253,18 @@ button:hover {
 
 button:active {
   transform: translateY(1px);
+}
+
+.secondary-button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  box-shadow: none;
+}
+
+.secondary-button:hover {
+  box-shadow: none;
+  background: #f8fafc;
 }
 
 #status {
@@ -275,5 +305,10 @@ button:active {
 
   .meta-row {
     flex-direction: column;
+  }
+
+  .shortcut-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

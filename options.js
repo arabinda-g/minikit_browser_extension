@@ -10,6 +10,7 @@ const autoMaximizeEnabled = document.getElementById("autoMaximizeEnabled");
 const excludePatterns = document.getElementById("excludePatterns");
 const lastTabShortcutEnabled = document.getElementById("lastTabShortcutEnabled");
 const saveButton = document.getElementById("saveButton");
+const openShortcutsButton = document.getElementById("openShortcutsButton");
 const statusNode = document.getElementById("status");
 const patternCount = document.getElementById("patternCount");
 
@@ -131,6 +132,23 @@ async function saveOptions() {
 }
 
 excludePatterns.addEventListener("input", updatePatternCount);
+
+openShortcutsButton.addEventListener("click", () => {
+  const shortcutsUrl = "chrome://extensions/shortcuts";
+  if (ext && ext.tabs && typeof ext.tabs.create === "function") {
+    ext.tabs.create({ url: shortcutsUrl }, () => {
+      const err = ext.runtime?.lastError;
+      if (err) {
+        showStatus("Unable to open shortcut settings automatically. Open chrome://extensions/shortcuts.", true);
+      }
+    });
+    return;
+  }
+  const opened = window.open(shortcutsUrl, "_blank", "noopener");
+  if (!opened) {
+    showStatus("Open chrome://extensions/shortcuts from Chrome to customize shortcuts.", true);
+  }
+});
 
 saveButton.addEventListener("click", () => {
   saveOptions().catch((error) => {
