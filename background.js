@@ -247,7 +247,7 @@ async function moveCurrentTabToNewWindow() {
   }
 
   try {
-    await windowsCreate({ tabId: activeTabs[0].id });
+    await windowsCreate({ tabId: activeTabs[0].id, state: "maximized" });
   } catch (error) {
     // Ignore transient create-window errors.
   }
