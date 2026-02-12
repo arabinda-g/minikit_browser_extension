@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Extension Options - MiniKit</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>MiniKit</h1>
+      <p class="subtitle">
+        Configure how your browser windows are maximized and how the last-tab shortcut behaves.
+      </p>
+
+      <section class="card">
+        <h2>Feature: Auto-Maximize Newly Opened Chrome Windows</h2>
+        <label class="checkbox-row">
+          <input id="autoMaximizeEnabled" type="checkbox" />
+          <span>Enable automatic maximization for newly opened windows</span>
+        </label>
+
+        <label for="excludePatterns" class="label">
+          Excluded URL regex patterns (one pattern per line)
+        </label>
+        <textarea
+          id="excludePatterns"
+          rows="8"
+          placeholder="^https:\/\/mail\.google\.com\/
+^https:\/\/meet\.google\.com\/"
+        ></textarea>
+        <p class="help">
+          If any tab URL in a newly opened window matches one of these regex patterns, that window will
+          not be maximized.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Feature: Ctrl+Q Switches to Last Tab (Google Chrome Only)</h2>
+        <label class="checkbox-row">
+          <input id="lastTabShortcutEnabled" type="checkbox" />
+          <span>Enable Ctrl+Q to switch to the previously used tab in the current window</span>
+        </label>
+      </section>
+
+      <div class="actions">
+        <button id="saveButton" type="button">Save Settings</button>
+        <p id="status" role="status" aria-live="polite"></p>
+      </div>
+    </main>
+
+    <script src="options.js"></script>
+  </body>
+</html>

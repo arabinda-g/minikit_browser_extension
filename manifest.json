@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "MiniKit",
+  "description": "Automatically maximize new browser windows with URL exclusions and switch to the previously used tab via Ctrl+Q.",
+  "version": "1.0.0",
+  "permissions": [
+    "storage",
+    "tabs",
+    "windows"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "switch-to-last-tab": {
+      "suggested_key": {
+        "default": "Ctrl+Q"
+      },
+      "description": "Switch to the last used tab in the current window."
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "minikit@local"
+    }
+  }
+}
