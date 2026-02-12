@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MiniKit",
-  "description": "Automatically maximize new browser windows with URL exclusions and switch to the previously used tab via Ctrl+Q.",
+  "description": "Auto-maximize windows, switch to the last tab, and move the current tab to a new window.",
   "version": "1.0.0",
   "permissions": [
     "storage",
@@ -21,6 +21,9 @@
         "default": "Ctrl+Q"
       },
       "description": "Switch to the last used tab in the current window."
+    },
+    "move-current-tab-to-new-window": {
+      "description": "Move only the current tab into a new window."
     }
   },
   "browser_specific_settings": {

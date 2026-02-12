@@ -3,14 +3,16 @@ const ext = globalThis.browser ?? globalThis.chrome;
 const DEFAULT_CONFIG = {
   autoMaximizeEnabled: true,
   autoMaximizeExcludePatterns: [],
-  lastTabShortcutEnabled: true
+  lastTabShortcutEnabled: true,
+  moveCurrentTabToNewWindowEnabled: true
 };
 
 const autoMaximizeEnabled = document.getElementById("autoMaximizeEnabled");
 const excludePatterns = document.getElementById("excludePatterns");
 const lastTabShortcutEnabled = document.getElementById("lastTabShortcutEnabled");
+const moveCurrentTabToNewWindowEnabled = document.getElementById("moveCurrentTabToNewWindowEnabled");
 const saveButton = document.getElementById("saveButton");
-const openShortcutsButton = document.getElementById("openShortcutsButton");
+const openShortcutsButtons = document.querySelectorAll(".open-shortcuts-button");
 const statusNode = document.getElementById("status");
 const patternCount = document.getElementById("patternCount");
 
@@ -101,6 +103,7 @@ async function loadOptions() {
   const values = await storageGet(DEFAULT_CONFIG);
   autoMaximizeEnabled.checked = Boolean(values.autoMaximizeEnabled);
   lastTabShortcutEnabled.checked = Boolean(values.lastTabShortcutEnabled);
+  moveCurrentTabToNewWindowEnabled.checked = Boolean(values.moveCurrentTabToNewWindowEnabled);
   excludePatterns.value = Array.isArray(values.autoMaximizeExcludePatterns)
     ? values.autoMaximizeExcludePatterns.join("\n")
     : "";
@@ -119,7 +122,8 @@ async function saveOptions() {
   await storageSet({
     autoMaximizeEnabled: autoMaximizeEnabled.checked,
     autoMaximizeExcludePatterns: patterns,
-    lastTabShortcutEnabled: lastTabShortcutEnabled.checked
+    lastTabShortcutEnabled: lastTabShortcutEnabled.checked,
+    moveCurrentTabToNewWindowEnabled: moveCurrentTabToNewWindowEnabled.checked
   });
 
   showStatus("Settings saved.");
@@ -133,7 +137,7 @@ async function saveOptions() {
 
 excludePatterns.addEventListener("input", updatePatternCount);
 
-openShortcutsButton.addEventListener("click", () => {
+function openShortcutSettings() {
   const shortcutsUrl = "chrome://extensions/shortcuts";
   if (ext && ext.tabs && typeof ext.tabs.create === "function") {
     ext.tabs.create({ url: shortcutsUrl }, () => {
@@ -148,6 +152,10 @@ openShortcutsButton.addEventListener("click", () => {
   if (!opened) {
     showStatus("Open chrome://extensions/shortcuts from Chrome to customize shortcuts.", true);
   }
+}
+
+openShortcutsButtons.forEach((button) => {
+  button.addEventListener("click", openShortcutSettings);
 });
 
 saveButton.addEventListener("click", () => {

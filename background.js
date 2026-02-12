@@ -3,7 +3,8 @@ const ext = globalThis.browser ?? globalThis.chrome;
 const DEFAULT_CONFIG = {
   autoMaximizeEnabled: true,
   autoMaximizeExcludePatterns: [],
-  lastTabShortcutEnabled: true
+  lastTabShortcutEnabled: true,
+  moveCurrentTabToNewWindowEnabled: true
 };
 
 const previousTabIdByWindowId = new Map();
@@ -63,6 +64,19 @@ function windowsGetLastFocused(getInfo = { populate: false }) {
   });
 }
 
+function windowsCreate(createData) {
+  return new Promise((resolve, reject) => {
+    ext.windows.create(createData, (windowInfo) => {
+      const err = ext.runtime.lastError;
+      if (err) {
+        reject(new Error(err.message));
+        return;
+      }
+      resolve(windowInfo);
+    });
+  });
+}
+
 async function getConfig() {
   const values = await storageGet(DEFAULT_CONFIG);
   return {
@@ -70,7 +84,8 @@ async function getConfig() {
     autoMaximizeExcludePatterns: Array.isArray(values.autoMaximizeExcludePatterns)
       ? values.autoMaximizeExcludePatterns
       : [],
-    lastTabShortcutEnabled: Boolean(values.lastTabShortcutEnabled)
+    lastTabShortcutEnabled: Boolean(values.lastTabShortcutEnabled),
+    moveCurrentTabToNewWindowEnabled: Boolean(values.moveCurrentTabToNewWindowEnabled)
   };
 }
 
@@ -209,6 +224,35 @@ async function switchToLastTabInCurrentWindow() {
   }
 }
 
+async function moveCurrentTabToNewWindow() {
+  const config = await getConfig();
+  if (!config.moveCurrentTabToNewWindowEnabled) {
+    return;
+  }
+
+  let focusedWindow;
+  try {
+    focusedWindow = await windowsGetLastFocused({ populate: false });
+  } catch (error) {
+    return;
+  }
+
+  if (!focusedWindow || typeof focusedWindow.id !== "number") {
+    return;
+  }
+
+  const activeTabs = await tabsQuery({ windowId: focusedWindow.id, active: true });
+  if (!activeTabs.length || typeof activeTabs[0].id !== "number") {
+    return;
+  }
+
+  try {
+    await windowsCreate({ tabId: activeTabs[0].id });
+  } catch (error) {
+    // Ignore transient create-window errors.
+  }
+}
+
 ext.runtime.onInstalled.addListener(async () => {
   const existing = await storageGet(DEFAULT_CONFIG);
   const merged = {
@@ -222,7 +266,11 @@ ext.runtime.onInstalled.addListener(async () => {
     lastTabShortcutEnabled:
       typeof existing.lastTabShortcutEnabled === "boolean"
         ? existing.lastTabShortcutEnabled
-        : DEFAULT_CONFIG.lastTabShortcutEnabled
+        : DEFAULT_CONFIG.lastTabShortcutEnabled,
+    moveCurrentTabToNewWindowEnabled:
+      typeof existing.moveCurrentTabToNewWindowEnabled === "boolean"
+        ? existing.moveCurrentTabToNewWindowEnabled
+        : DEFAULT_CONFIG.moveCurrentTabToNewWindowEnabled
   };
   ext.storage.sync.set(merged);
 });
@@ -237,6 +285,10 @@ ext.windows.onCreated.addListener((windowInfo) => {
 ext.commands.onCommand.addListener((command) => {
   if (command === "switch-to-last-tab") {
     switchToLastTabInCurrentWindow();
+    return;
+  }
+  if (command === "move-current-tab-to-new-window") {
+    moveCurrentTabToNewWindow();
   }
 });
 
