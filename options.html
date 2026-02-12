@@ -8,39 +8,63 @@
   </head>
   <body>
     <main class="container">
-      <h1>MiniKit</h1>
-      <p class="subtitle">
-        Configure how your browser windows are maximized and how the last-tab shortcut behaves.
-      </p>
+      <header class="hero">
+        <p class="hero-kicker">MiniKit Extension</p>
+        <h1>Professional Browser Controls</h1>
+        <p class="subtitle">
+          Fine-tune window behavior and tab switching with clean, focused controls.
+        </p>
+      </header>
 
       <section class="card">
-        <h2>Feature: Auto-Maximize Newly Opened Chrome Windows</h2>
-        <label class="checkbox-row">
-          <input id="autoMaximizeEnabled" type="checkbox" />
-          <span>Enable automatic maximization for newly opened windows</span>
-        </label>
+        <div class="card-head">
+          <h2>Auto-Maximize Newly Opened Chrome Windows</h2>
+          <span class="chip">Window Control</span>
+        </div>
 
-        <label for="excludePatterns" class="label">
-          Excluded URL regex patterns (one pattern per line)
-        </label>
+        <div class="setting-row">
+          <div class="setting-copy">
+            <h3>Enable auto-maximize</h3>
+            <p>Automatically maximize newly opened Chrome windows unless excluded by regex rules.</p>
+          </div>
+          <label class="switch" for="autoMaximizeEnabled">
+            <input id="autoMaximizeEnabled" type="checkbox" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <label for="excludePatterns" class="label">Excluded URL regex patterns</label>
         <textarea
           id="excludePatterns"
           rows="8"
           placeholder="^https:\/\/mail\.google\.com\/
 ^https:\/\/meet\.google\.com\/"
         ></textarea>
-        <p class="help">
-          If any tab URL in a newly opened window matches one of these regex patterns, that window will
-          not be maximized.
-        </p>
+        <div class="meta-row">
+          <p class="help">
+            If any tab URL in a newly opened window matches one of these regex patterns, that window will
+            not be maximized.
+          </p>
+          <p id="patternCount" class="counter">0 patterns</p>
+        </div>
       </section>
 
       <section class="card">
-        <h2>Feature: Ctrl+Q Switches to Last Tab (Google Chrome Only)</h2>
-        <label class="checkbox-row">
-          <input id="lastTabShortcutEnabled" type="checkbox" />
-          <span>Enable Ctrl+Q to switch to the previously used tab in the current window</span>
-        </label>
+        <div class="card-head">
+          <h2>Ctrl+Q Switches to Last Tab (Google Chrome Only)</h2>
+          <span class="chip">Productivity</span>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-copy">
+            <h3>Enable Ctrl+Q last-tab switch</h3>
+            <p>Switch to the previously used tab in the current Chrome window only.</p>
+          </div>
+          <label class="switch" for="lastTabShortcutEnabled">
+            <input id="lastTabShortcutEnabled" type="checkbox" />
+            <span class="slider"></span>
+          </label>
+        </div>
       </section>
 
       <div class="actions">

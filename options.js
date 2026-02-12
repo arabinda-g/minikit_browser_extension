@@ -11,6 +11,7 @@ const excludePatterns = document.getElementById("excludePatterns");
 const lastTabShortcutEnabled = document.getElementById("lastTabShortcutEnabled");
 const saveButton = document.getElementById("saveButton");
 const statusNode = document.getElementById("status");
+const patternCount = document.getElementById("patternCount");
 
 function hasExtensionStorage() {
   return Boolean(ext && ext.storage && ext.storage.sync);
@@ -70,6 +71,12 @@ function normalizePatterns(rawText) {
     .filter(Boolean);
 }
 
+function updatePatternCount() {
+  const patterns = normalizePatterns(excludePatterns.value);
+  const count = patterns.length;
+  patternCount.textContent = `${count} pattern${count === 1 ? "" : "s"}`;
+}
+
 function validatePatterns(patterns) {
   const invalid = [];
   for (const pattern of patterns) {
@@ -84,7 +91,9 @@ function validatePatterns(patterns) {
 
 function showStatus(message, isError = false) {
   statusNode.textContent = message;
-  statusNode.style.color = isError ? "#b91c1c" : "#166534";
+  statusNode.classList.add("is-visible");
+  statusNode.classList.toggle("is-error", isError);
+  statusNode.classList.toggle("is-success", !isError);
 }
 
 async function loadOptions() {
@@ -94,6 +103,7 @@ async function loadOptions() {
   excludePatterns.value = Array.isArray(values.autoMaximizeExcludePatterns)
     ? values.autoMaximizeExcludePatterns.join("\n")
     : "";
+  updatePatternCount();
 }
 
 async function saveOptions() {
@@ -115,9 +125,12 @@ async function saveOptions() {
   setTimeout(() => {
     if (statusNode.textContent === "Settings saved.") {
       statusNode.textContent = "";
+      statusNode.classList.remove("is-visible", "is-success", "is-error");
     }
   }, 2500);
 }
+
+excludePatterns.addEventListener("input", updatePatternCount);
 
 saveButton.addEventListener("click", () => {
   saveOptions().catch((error) => {
