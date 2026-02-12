@@ -26,8 +26,29 @@ body {
   margin-bottom: 20px;
 }
 
+.hero-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.hero-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.3);
+}
+
+.hero-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .hero-kicker {
-  margin: 0 0 8px;
+  margin: 0;
   font-weight: 700;
   font-size: 12px;
   letter-spacing: 0.08em;
@@ -42,7 +63,7 @@ h1 {
 }
 
 .subtitle {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   max-width: 700px;
   color: #475569;
   font-size: 16px;
@@ -295,6 +316,12 @@ button:active {
 }
 
 @media (max-width: 760px) {
+  .hero-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
   h1 {
     font-size: 28px;
   }

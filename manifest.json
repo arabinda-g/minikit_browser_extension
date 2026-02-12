@@ -4,16 +4,16 @@
   "description": "Auto-maximize windows, switch to the last tab, and move the current tab to a new window.",
   "version": "1.0.0",
   "icons": {
-    "16": "icon16.png",
+    "16": "icon32.png",
     "32": "icon32.png",
-    "48": "icon48.png",
+    "48": "icon32.png",
     "128": "icon128.png"
   },
   "action": {
     "default_icon": {
-      "16": "icon16.png",
+      "16": "icon32.png",
       "32": "icon32.png",
-      "48": "icon48.png",
+      "48": "icon32.png",
       "128": "icon128.png"
     }
   },
