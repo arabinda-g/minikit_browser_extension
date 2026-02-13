@@ -12,9 +12,16 @@ const excludePatterns = document.getElementById("excludePatterns");
 const lastTabShortcutEnabled = document.getElementById("lastTabShortcutEnabled");
 const moveCurrentTabToNewWindowEnabled = document.getElementById("moveCurrentTabToNewWindowEnabled");
 const saveButton = document.getElementById("saveButton");
+const resetButton = document.getElementById("resetButton");
 const openShortcutsButtons = document.querySelectorAll(".open-shortcuts-button");
 const statusNode = document.getElementById("status");
 const patternCount = document.getElementById("patternCount");
+const patternCountHero = document.getElementById("patternCountHero");
+const patternValidation = document.getElementById("patternValidation");
+const enabledCount = document.getElementById("enabledCount");
+const dirtyBadge = document.getElementById("dirtyBadge");
+
+let initialState = null;
 
 function hasExtensionStorage() {
   return Boolean(ext && ext.storage && ext.storage.sync);
@@ -74,10 +81,34 @@ function normalizePatterns(rawText) {
     .filter(Boolean);
 }
 
+function getCurrentState() {
+  return {
+    autoMaximizeEnabled: autoMaximizeEnabled.checked,
+    autoMaximizeExcludePatterns: normalizePatterns(excludePatterns.value),
+    lastTabShortcutEnabled: lastTabShortcutEnabled.checked,
+    moveCurrentTabToNewWindowEnabled: moveCurrentTabToNewWindowEnabled.checked
+  };
+}
+
+function isSameState(a, b) {
+  if (!a || !b) {
+    return false;
+  }
+
+  return (
+    a.autoMaximizeEnabled === b.autoMaximizeEnabled &&
+    a.lastTabShortcutEnabled === b.lastTabShortcutEnabled &&
+    a.moveCurrentTabToNewWindowEnabled === b.moveCurrentTabToNewWindowEnabled &&
+    a.autoMaximizeExcludePatterns.length === b.autoMaximizeExcludePatterns.length &&
+    a.autoMaximizeExcludePatterns.every((value, index) => value === b.autoMaximizeExcludePatterns[index])
+  );
+}
+
 function updatePatternCount() {
   const patterns = normalizePatterns(excludePatterns.value);
   const count = patterns.length;
   patternCount.textContent = `${count} pattern${count === 1 ? "" : "s"}`;
+  patternCountHero.textContent = String(count);
 }
 
 function validatePatterns(patterns) {
@@ -92,6 +123,37 @@ function validatePatterns(patterns) {
   return invalid;
 }
 
+function renderPatternValidation() {
+  const patterns = normalizePatterns(excludePatterns.value);
+  const invalidPatterns = validatePatterns(patterns);
+  const hasErrors = invalidPatterns.length > 0;
+
+  patternValidation.classList.toggle("is-error", hasErrors);
+  excludePatterns.classList.toggle("has-error", hasErrors);
+
+  if (!hasErrors) {
+    patternValidation.textContent = "";
+    return true;
+  }
+
+  patternValidation.textContent = `Invalid regex: ${invalidPatterns.join(", ")}`;
+  return false;
+}
+
+function updateEnabledCount() {
+  const count = [autoMaximizeEnabled, lastTabShortcutEnabled, moveCurrentTabToNewWindowEnabled].filter(
+    (node) => node.checked
+  ).length;
+  enabledCount.textContent = `${count} / 3`;
+}
+
+function updateDirtyState() {
+  const currentState = getCurrentState();
+  const isDirty = !isSameState(initialState, currentState);
+  dirtyBadge.hidden = !isDirty;
+  saveButton.disabled = !isDirty;
+}
+
 function showStatus(message, isError = false) {
   statusNode.textContent = message;
   statusNode.classList.add("is-visible");
@@ -101,30 +163,32 @@ function showStatus(message, isError = false) {
 
 async function loadOptions() {
   const values = await storageGet(DEFAULT_CONFIG);
-  autoMaximizeEnabled.checked = Boolean(values.autoMaximizeEnabled);
-  lastTabShortcutEnabled.checked = Boolean(values.lastTabShortcutEnabled);
-  moveCurrentTabToNewWindowEnabled.checked = Boolean(values.moveCurrentTabToNewWindowEnabled);
+  autoMaximizeEnabled.checked = Boolean(values.autoMaximizeEnabled ?? DEFAULT_CONFIG.autoMaximizeEnabled);
+  lastTabShortcutEnabled.checked = Boolean(values.lastTabShortcutEnabled ?? DEFAULT_CONFIG.lastTabShortcutEnabled);
+  moveCurrentTabToNewWindowEnabled.checked = Boolean(
+    values.moveCurrentTabToNewWindowEnabled ?? DEFAULT_CONFIG.moveCurrentTabToNewWindowEnabled
+  );
   excludePatterns.value = Array.isArray(values.autoMaximizeExcludePatterns)
     ? values.autoMaximizeExcludePatterns.join("\n")
     : "";
+
+  initialState = getCurrentState();
   updatePatternCount();
+  renderPatternValidation();
+  updateEnabledCount();
+  updateDirtyState();
 }
 
 async function saveOptions() {
-  const patterns = normalizePatterns(excludePatterns.value);
-  const invalidPatterns = validatePatterns(patterns);
-
-  if (invalidPatterns.length) {
-    showStatus(`Invalid regex pattern(s): ${invalidPatterns.join(", ")}`, true);
+  if (!renderPatternValidation()) {
+    showStatus("Fix invalid regex patterns before saving.", true);
     return;
   }
 
-  await storageSet({
-    autoMaximizeEnabled: autoMaximizeEnabled.checked,
-    autoMaximizeExcludePatterns: patterns,
-    lastTabShortcutEnabled: lastTabShortcutEnabled.checked,
-    moveCurrentTabToNewWindowEnabled: moveCurrentTabToNewWindowEnabled.checked
-  });
+  const currentState = getCurrentState();
+  await storageSet(currentState);
+  initialState = currentState;
+  updateDirtyState();
 
   showStatus("Settings saved.");
   setTimeout(() => {
@@ -135,7 +199,25 @@ async function saveOptions() {
   }, 2500);
 }
 
-excludePatterns.addEventListener("input", updatePatternCount);
+async function resetToDefaults() {
+  autoMaximizeEnabled.checked = DEFAULT_CONFIG.autoMaximizeEnabled;
+  lastTabShortcutEnabled.checked = DEFAULT_CONFIG.lastTabShortcutEnabled;
+  moveCurrentTabToNewWindowEnabled.checked = DEFAULT_CONFIG.moveCurrentTabToNewWindowEnabled;
+  excludePatterns.value = DEFAULT_CONFIG.autoMaximizeExcludePatterns.join("\n");
+
+  updatePatternCount();
+  renderPatternValidation();
+  updateEnabledCount();
+  updateDirtyState();
+  showStatus("Defaults restored. Save to apply changes.");
+}
+
+function onAnyInputChange() {
+  updatePatternCount();
+  renderPatternValidation();
+  updateEnabledCount();
+  updateDirtyState();
+}
 
 function openShortcutSettings() {
   const shortcutsUrl = "chrome://extensions/shortcuts";
@@ -158,9 +240,20 @@ openShortcutsButtons.forEach((button) => {
   button.addEventListener("click", openShortcutSettings);
 });
 
+excludePatterns.addEventListener("input", onAnyInputChange);
+autoMaximizeEnabled.addEventListener("change", onAnyInputChange);
+lastTabShortcutEnabled.addEventListener("change", onAnyInputChange);
+moveCurrentTabToNewWindowEnabled.addEventListener("change", onAnyInputChange);
+
 saveButton.addEventListener("click", () => {
   saveOptions().catch((error) => {
     showStatus(`Failed to save settings: ${error.message}`, true);
+  });
+});
+
+resetButton.addEventListener("click", () => {
+  resetToDefaults().catch((error) => {
+    showStatus(`Failed to restore defaults: ${error.message}`, true);
   });
 });
 

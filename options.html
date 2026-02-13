@@ -9,101 +9,126 @@
   <body>
     <main class="container">
       <header class="hero">
-        <div class="hero-title-row">
-          <img src="icon128.png" alt="MiniKit icon" class="hero-icon" />
-          <div class="hero-title-block">
-            <p class="hero-kicker">MiniKit Extension</p>
-            <h1>Professional Browser Controls</h1>
+        <div class="hero-head">
+          <div class="hero-title-row">
+            <img src="icon128.png" alt="MiniKit icon" class="hero-icon" />
+            <div class="hero-title-block">
+              <p class="hero-kicker">MiniKit Extension</p>
+              <h1>Faster Browser Control Center</h1>
+            </div>
           </div>
+          <span id="dirtyBadge" class="dirty-badge" hidden>Unsaved changes</span>
         </div>
         <p class="subtitle">
-          Fine-tune window behavior and tab switching with clean, focused controls.
+          Manage automation, shortcuts, and tab actions from one focused workspace.
         </p>
+        <div class="quick-stats">
+          <article class="stat-card">
+            <p class="stat-label">Active features</p>
+            <p id="enabledCount" class="stat-value">0 / 3</p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-label">Regex patterns</p>
+            <p id="patternCountHero" class="stat-value">0</p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-label">Shortcuts</p>
+            <p class="stat-value">2 commands</p>
+          </article>
+        </div>
       </header>
 
-      <section class="card">
-        <div class="card-head">
-          <h2>Auto-Maximize Newly Opened Chrome Windows</h2>
+      <section class="section-shell">
+        <div class="section-title-row">
+          <h2>Automation Rules</h2>
           <span class="chip">Window Control</span>
         </div>
+        <p class="section-subtitle">Control how newly opened browser windows behave.</p>
 
-        <div class="setting-row">
-          <div class="setting-copy">
-            <h3>Enable auto-maximize</h3>
-            <p>Automatically maximize newly opened Chrome windows unless excluded by regex rules.</p>
+        <section class="card">
+          <div class="setting-row">
+            <div class="setting-copy">
+              <h3>Enable auto-maximize</h3>
+              <p>Automatically maximize newly opened Chrome windows unless excluded by regex rules.</p>
+            </div>
+            <label class="switch" for="autoMaximizeEnabled">
+              <input id="autoMaximizeEnabled" type="checkbox" />
+              <span class="slider"></span>
+            </label>
           </div>
-          <label class="switch" for="autoMaximizeEnabled">
-            <input id="autoMaximizeEnabled" type="checkbox" />
-            <span class="slider"></span>
-          </label>
-        </div>
 
-        <label for="excludePatterns" class="label">Excluded URL regex patterns</label>
-        <textarea
-          id="excludePatterns"
-          rows="8"
-          placeholder="^https:\/\/mail\.google\.com\/
+          <label for="excludePatterns" class="label">Excluded URL regex patterns</label>
+          <textarea
+            id="excludePatterns"
+            rows="8"
+            spellcheck="false"
+            placeholder="^https:\/\/mail\.google\.com\/
 ^https:\/\/meet\.google\.com\/"
-        ></textarea>
-        <div class="meta-row">
-          <p class="help">
-            If any tab URL in a newly opened window matches one of these regex patterns, that window will
-            not be maximized.
-          </p>
-          <p id="patternCount" class="counter">0 patterns</p>
-        </div>
+          ></textarea>
+          <div class="meta-row">
+            <p class="help">
+              One pattern per line. If any tab URL in a newly opened window matches one of these patterns,
+              that window will not be maximized.
+            </p>
+            <p id="patternCount" class="counter">0 patterns</p>
+          </div>
+          <p id="patternValidation" class="validation-message" role="alert" aria-live="polite"></p>
+        </section>
       </section>
 
-      <section class="card">
-        <div class="card-head">
-          <h2>Switch to Last Tab (Google Chrome Only)</h2>
+      <section class="section-shell">
+        <div class="section-title-row">
+          <h2>Shortcut Actions</h2>
           <span class="chip">Productivity</span>
         </div>
+        <p class="section-subtitle">Tune quick actions triggered through browser shortcuts.</p>
 
-        <div class="setting-row">
-          <div class="setting-copy">
-            <h3>Enable last-tab switch</h3>
-            <p>Switch to the previously used tab in the current Chrome window only.</p>
+        <section class="card">
+          <div class="setting-row">
+            <div class="setting-copy">
+              <h3>Switch to last tab</h3>
+              <p>Switch to the previously used tab in the current Chrome window only.</p>
+            </div>
+            <label class="switch" for="lastTabShortcutEnabled">
+              <input id="lastTabShortcutEnabled" type="checkbox" />
+              <span class="slider"></span>
+            </label>
           </div>
-          <label class="switch" for="lastTabShortcutEnabled">
-            <input id="lastTabShortcutEnabled" type="checkbox" />
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="shortcut-row">
-          <p class="shortcut-help">Want to change your shortcut key?</p>
-          <button type="button" class="secondary-button open-shortcuts-button">
-            Open Chrome Shortcut Settings
-          </button>
-        </div>
+          <div class="shortcut-row">
+            <p class="shortcut-help">Want to change your shortcut key?</p>
+            <button type="button" class="secondary-button open-shortcuts-button">
+              Open Chrome Shortcut Settings
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="setting-row">
+            <div class="setting-copy">
+              <h3>Move current tab to new window</h3>
+              <p>Move only the active tab into a newly created browser window.</p>
+            </div>
+            <label class="switch" for="moveCurrentTabToNewWindowEnabled">
+              <input id="moveCurrentTabToNewWindowEnabled" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="shortcut-row">
+            <p class="shortcut-help">Set your preferred shortcut in browser extension shortcuts.</p>
+            <button type="button" class="secondary-button open-shortcuts-button">
+              Open Chrome Shortcut Settings
+            </button>
+          </div>
+        </section>
       </section>
 
-      <section class="card">
-        <div class="card-head">
-          <h2>Move Current Tab to New Window</h2>
-          <span class="chip">Tab Action</span>
+      <div class="actions card">
+        <div class="action-copy">
+          <h3>Save changes</h3>
+          <p>Your preferences sync automatically across your browser profile.</p>
         </div>
-
-        <div class="setting-row">
-          <div class="setting-copy">
-            <h3>Enable move-tab command</h3>
-            <p>Moves only the active tab into a newly created window when the command is triggered.</p>
-          </div>
-          <label class="switch" for="moveCurrentTabToNewWindowEnabled">
-            <input id="moveCurrentTabToNewWindowEnabled" type="checkbox" />
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="shortcut-row">
-          <p class="shortcut-help">Set your preferred shortcut in Chrome extension shortcuts.</p>
-          <button type="button" class="secondary-button open-shortcuts-button">
-            Open Chrome Shortcut Settings
-          </button>
-        </div>
-      </section>
-
-      <div class="actions">
-        <button id="saveButton" type="button">Save Settings</button>
+        <button id="resetButton" type="button" class="secondary-button">Reset to Defaults</button>
+        <button id="saveButton" type="button" disabled>Save Settings</button>
         <p id="status" role="status" aria-live="polite"></p>
       </div>
     </main>
