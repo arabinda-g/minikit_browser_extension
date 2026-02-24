@@ -1,0 +1,113 @@
+:root {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --card: rgba(255, 255, 255, 0.95);
+  --text: #0f172a;
+  --text-muted: #475569;
+  --focus: #60a5fa;
+  --primary-start: #3b82f6;
+  --primary-end: #2563eb;
+  --success: #166534;
+  --error: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.16), transparent 45%),
+    radial-gradient(circle at left bottom, rgba(16, 185, 129, 0.1), transparent 40%),
+    var(--bg);
+}
+
+.popup {
+  margin: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--card);
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.header {
+  margin-bottom: 4px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #2563eb;
+}
+
+h1 {
+  margin: 4px 0 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 6px 0 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.primary-button {
+  width: 100%;
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, var(--primary-start), var(--primary-end));
+  color: #eff6ff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.34);
+}
+
+.primary-button:hover:not(:disabled) {
+  box-shadow: 0 12px 20px rgba(37, 99, 235, 0.42);
+}
+
+.primary-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.primary-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+  box-shadow: none;
+}
+
+.status {
+  margin: 10px 0 0;
+  min-height: 18px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.success {
+  color: var(--success);
+}
+
+.status.error {
+  color: var(--error);
+}

@@ -10,6 +10,7 @@
     "128": "icon128.png"
   },
   "action": {
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icon32.png",
       "32": "icon32.png",
